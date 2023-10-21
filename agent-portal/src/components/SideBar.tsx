@@ -1,0 +1,33 @@
+import { Sidebar } from "flowbite-react";
+import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiUser } from "react-icons/hi";
+import BranchLogo from "../assets/branch-logo.png";
+export default function DefaultSidebar() {
+    return (
+        <Sidebar aria-label="Branch Int'l">
+            <Sidebar.Logo href="/" img={BranchLogo} imgAlt="Branch Int'l"></Sidebar.Logo>
+            <Sidebar.Items>
+                <Sidebar.ItemGroup>
+                    <Sidebar.Item href="/" icon={HiChartPie}>
+                        <p>Home</p>
+                    </Sidebar.Item>
+                    <Sidebar.Item href="/inbox" icon={HiInbox} label="3">
+                        <p>Inbox</p>
+                    </Sidebar.Item>
+                    <Sidebar.Item href="#" icon={HiUser}>
+                        <p>Customers</p>
+                    </Sidebar.Item>
+                    <Sidebar.Item href="#" icon={HiShoppingBag}>
+                        <p>Loans</p>
+                    </Sidebar.Item>
+                    <Sidebar.Item href="#" icon={HiUser}>
+                        <p>Profile</p>
+                    </Sidebar.Item>
+
+                    <Sidebar.Item href="#" icon={HiArrowSmRight}>
+                        <p>Sign Out</p>
+                    </Sidebar.Item>
+                </Sidebar.ItemGroup>
+            </Sidebar.Items>
+        </Sidebar>
+    );
+}
