@@ -5,7 +5,7 @@ export type chat = {
     chatName?: string;
 };
 export type user = {
-    id: string;
+    _id: string;
     name?: string;
     email?: string;
     password?: string;
@@ -15,11 +15,11 @@ export type user = {
     loanLimit?: Number;
     availableLimit?: Number;
     employmentStatus?: string;
-    profileUrl?: string;
+    profilePhotoPath?: string;
     phone?: string;
 };
 export type message = {
-    id: string;
+    _id: string;
     customerId?: string;
     customer?: user;
     createdAt?: Date;
