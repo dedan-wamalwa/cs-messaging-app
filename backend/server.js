@@ -1,12 +1,21 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const messages = require("./data/messages");
-const users = require("./data/users");
+const dbConnect = require("./config/db");
 const cors = require("cors");
+const userRoutes = require("./routes/UserRoutes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-const app = express();
 dotenv.config();
-app.use(cors());
+dbConnect();
+const app = express();
+app.use(express.json());
+const origins = process.env.CORS_ORIGINS.split(",");
+app.use(
+    cors({
+        origin: origins,
+    })
+);
 
 app.get("/", (req, resp) => {
     resp.send("API is running succesfully");
@@ -15,16 +24,9 @@ app.get("/", (req, resp) => {
 app.get("/api/messages", (req, resp) => {
     resp.send(messages);
 });
-app.get("/api/users", (req, resp) => {
-    resp.send(users);
-});
-app.get("/api/users/:id", (req, resp) => {
-    const single = users.find((c) => c._id === req.params.id);
-    resp.send(single);
-});
-app.get("/api/messages/:id", (req, resp) => {
-    const single = messages.find((c) => c._id === req.params.id);
-    resp.send(single);
-});
+app.use("/api/users", userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

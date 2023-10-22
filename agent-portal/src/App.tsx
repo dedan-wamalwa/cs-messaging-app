@@ -12,8 +12,8 @@ const router = createBrowserRouter(
                 <Route index element={<Home />} loader={messagesLoader} />
                 <Route path="/messages/:id" element={<MessageDetails />} loader={messageDetailsLoader} />
             </Route>
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
+            <Route path="/sign_up" element={<SignUp />} />
+            <Route path="/sign_in" element={<SignIn />} />
             <Route path="*" element={<NotFound />} />
         </>
     )

@@ -1,6 +1,6 @@
 const users = [
     {
-        id: "4554-4564-3454-8976",
+        _id: "4554-4564-3454-8976",
         name: "Dedan Wamalwa",
         email: "wodedan@gmail.com",
         password: "xxxx123",
@@ -10,11 +10,11 @@ const users = [
         loanLimit: 500,
         availableLimit: 500,
         employmentStatus: "Employed",
-        profileUrl: "dedan-wamalwa-profile-1234",
+        profilePhotoPath: "dedan-wamalwa-profile-1234",
         phone: "254796760359",
     },
     {
-        id: "4554-4564-3454-1234",
+        _id: "4554-4564-3454-1234",
         name: "Grace Wahu",
         email: "graceu@gmail.com",
         password: "xxxx123",
@@ -24,11 +24,11 @@ const users = [
         loanLimit: 500,
         availableLimit: 500,
         employmentStatus: "Unemployed",
-        profileUrl: "dedan-wamalwa-profile-1234",
+        profilePhotoPath: "dedan-wamalwa-profile-1234",
         phone: "254796760359",
     },
     {
-        id: "4554-4564-3454-4566",
+        _id: "4554-4564-3454-4566",
         name: "Dedan Odongo",
         email: "wodedan@branch.com",
         password: "xxxx123",
@@ -38,11 +38,11 @@ const users = [
         loanLimit: null,
         availableLimit: null,
         employmentStatus: "Employed",
-        profileUrl: "dedan-wamalwa-profile-1234",
+        profilePhotoPath: "dedan-wamalwa-profile-1234",
         phone: "254796760359",
     },
     {
-        id: "4554-4564-3454-5034",
+        _id: "4554-4564-3454-5034",
         name: "Wamalwa Odongo",
         email: "dedan@gmail.com",
         password: "xxxx123",
@@ -52,7 +52,7 @@ const users = [
         loanLimit: null,
         availableLimit: null,
         employmentStatus: "Employed",
-        profileUrl: "dedan-wamalwa-prdf-1234",
+        profilePhotoPath: "dedan-wamalwa-prdf-1234",
         phone: "254776760359",
     },
 ];
