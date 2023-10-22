@@ -8,13 +8,13 @@ const Home = () => {
         <>
             <div className="w-full p-4 flex flex-col gap-1">
                 {messages.map((m) => (
-                    <Message key={m.id} />
+                    <Message key={m._id} />
                 ))}
                 {messages.map((m) => (
-                    <Message key={m.id} />
+                    <Message key={m._id} />
                 ))}
                 {messages.map((m) => (
-                    <Message key={m.id} />
+                    <Message key={m._id} />
                 ))}
             </div>
         </>
