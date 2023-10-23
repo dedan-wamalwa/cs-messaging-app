@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
 const mongoose = require("mongoose");

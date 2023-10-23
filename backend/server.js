@@ -4,6 +4,7 @@ const messages = require("./data/messages");
 const dbConnect = require("./config/db");
 const cors = require("cors");
 const userRoutes = require("./routes/UserRoutes");
+const messageRoutes = require("./routes/MessagesRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
@@ -21,11 +22,11 @@ app.get("/", (req, resp) => {
     resp.send("API is running succesfully");
 });
 
-app.get("/api/messages", (req, resp) => {
+app.get("/api/message", (req, resp) => {
     resp.send(messages);
 });
 app.use("/api/users", userRoutes);
-
+app.use("/api/messages", messageRoutes);
 app.use(notFound);
 app.use(errorHandler);
 const PORT = process.env.PORT || 5001;
