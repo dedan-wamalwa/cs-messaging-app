@@ -5,12 +5,15 @@ const User = require("../models/UserModel");
 const getMessages = asyncHandler(async (req, res) => {
     const keyword = req.query.search
         ? {
-              $or: [{ description: { $regex: req.query.search, $options: "i" } }],
+              $or: [
+                  { "sender.name": { $regex: req.query.search, $options: "i" } },
+                  { description: { $regex: req.query.search, $options: "i" } },
+              ],
           }
         : {};
     try {
-        const messages = await Message.find(keyword);
-        res.send(messages);
+        const messages = await Message.find(keyword).find({ isRead: false }).populate("sender", "-password").sort({ createdAt: 1 });
+        res.json(messages);
     } catch (error) {
         res.status(500);
         throw new Error("Server Error");
@@ -43,7 +46,7 @@ const getCustomerMessages = asyncHandler(async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const messages = await Message.find({ customer: user._id });
+        const messages = await Message.find({ customer: user._id }).populate("sender", "-password").sort({ createdAt: 1 });
         res.json(messages);
     } catch (error) {
         console.error(error);
