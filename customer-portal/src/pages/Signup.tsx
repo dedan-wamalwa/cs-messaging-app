@@ -29,7 +29,7 @@ const SignUp = () => {
             return;
         }
         try {
-            const role = "Agent";
+            const role = "Customer";
             const api = import.meta.env.VITE_PUBLIC_API_HOST;
             const response = await fetch(`${api}/api/users`, {
                 method: "POST",
