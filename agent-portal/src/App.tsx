@@ -2,7 +2,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import SignUp from "./pages/Signup";
 import SignIn from "./pages/Signin";
 import Home, { messagesLoader } from "./pages/Home";
-import MessageDetails, { messageDetailsLoader } from "./pages/MessageDetails";
+import Chat, { customerMessagesLoader } from "./pages/Chat";
 import RootLayout from "./layouts/RootLayout";
 import NotFound from "./pages/NotFound";
 const router = createBrowserRouter(
@@ -10,7 +10,7 @@ const router = createBrowserRouter(
         <>
             <Route path="/" element={<RootLayout />}>
                 <Route index element={<Home />} loader={messagesLoader} />
-                <Route path="/messages/:id" element={<MessageDetails />} loader={messageDetailsLoader} />
+                <Route path="/chats/:id" element={<Chat />} loader={customerMessagesLoader} />
             </Route>
             <Route path="/sign_up" element={<SignUp />} />
             <Route path="/sign_in" element={<SignIn />} />

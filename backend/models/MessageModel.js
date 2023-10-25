@@ -13,6 +13,7 @@ const messageModel = mongoose.Schema(
         assignee: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         attachmentPath: { type: String, trim: true },
+        isCustomerMessage: { type: Boolean, default: true },
     },
     {
         timestamps: true,
