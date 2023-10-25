@@ -32,8 +32,8 @@ export type message = {
 };
 
 export type messageContextType = {
-    user: user;
-    setUser: React.Dispatch<React.SetStateAction<user>>;
+    userData: user;
+    setUserData: React.Dispatch<React.SetStateAction<user>>;
 };
 
 export type Params = {

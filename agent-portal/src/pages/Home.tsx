@@ -9,7 +9,6 @@ dayjs.extend(relativeTime);
 
 const Home = () => {
     const storedData = localStorage.getItem("userInfo");
-    const userDetails = storedData ? JSON.parse(storedData) : { _id: "000000000000000000000000" };
     const navigate = useNavigate();
     useEffect(() => {
         if (!storedData) {
