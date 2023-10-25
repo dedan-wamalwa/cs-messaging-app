@@ -1,6 +1,6 @@
 import { Button, Label, Card, FileInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../components/content/Logo";
 const SignUp = () => {
     const [name, setName] = useState<string>();
@@ -14,7 +14,17 @@ const SignUp = () => {
     const [error, setError] = useState<string | null>();
     const [error1, setError1] = useState<string | null>();
     const navigate = useNavigate();
+    const defaultRole = "Customer";
 
+    useEffect(() => {
+        const storedData = localStorage.getItem("userInfo");
+        if (storedData) {
+            const { role } = JSON.parse(storedData);
+            if (role === defaultRole) {
+                navigate("/");
+            }
+        }
+    }, [navigate]);
     const submitDetails = async (): Promise<void> => {
         setLoading(true);
         setError1(null);
@@ -51,8 +61,6 @@ const SignUp = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            const data = await response.json();
-            localStorage.setItem("userInfo", JSON.stringify(data));
             setLoading(false);
 
             navigate("/sign_in", { state: email });

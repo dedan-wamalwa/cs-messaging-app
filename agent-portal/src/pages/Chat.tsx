@@ -89,7 +89,7 @@ const ChatBox = () => {
     };
     return (
         <div>
-            <Card className="px-4">
+            <Card className="px-4 flex flex-col">
                 <div className="ml-1">
                     <button onClick={() => props.setOpenModal("default")}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 448 512">
@@ -106,8 +106,7 @@ const ChatBox = () => {
                         key={message._id}
                     />
                 ))}
-
-                <form className="flex flex-col gap-2" onSubmit={(event) => event.preventDefault()}>
+                <form className="mt-auto flex flex-col gap-2" onSubmit={(event) => event.preventDefault()}>
                     <div className="flex gap-1 max-w-lg" id="textarea">
                         <Textarea
                             id="comment"

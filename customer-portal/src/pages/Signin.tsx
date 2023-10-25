@@ -1,7 +1,7 @@
 import { Button, Label, Card } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/content/Logo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const SignIn = () => {
     const location = useLocation();
     const [email, setEmail] = useState<string>();
@@ -9,7 +9,17 @@ const SignIn = () => {
     const [loading, setLoading] = useState<boolean>();
     const [error, setError] = useState<string | null>();
     const navigate = useNavigate();
+    const defaultRole = "Customer";
 
+    useEffect(() => {
+        const storedData = localStorage.getItem("userInfo");
+        if (storedData) {
+            const { role } = JSON.parse(storedData);
+            if (role === defaultRole) {
+                navigate("/");
+            }
+        }
+    }, [navigate]);
     const submitDetails = async (): Promise<void> => {
         setLoading(true);
         if (!email || !password) {
@@ -27,6 +37,7 @@ const SignIn = () => {
                 body: JSON.stringify({
                     email,
                     password,
+                    role: defaultRole,
                 }),
             });
             if (response.status === 401) {
@@ -66,7 +77,7 @@ const SignIn = () => {
                             id="email"
                             required
                             type="email"
-                            placeholder="name@branch.com"
+                            placeholder="e.g. name@gmail.com"
                             value={location.state}
                             onChange={(e) => setEmail(e.target.value)}
                         />
