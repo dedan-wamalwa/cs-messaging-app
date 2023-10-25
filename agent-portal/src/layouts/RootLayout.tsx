@@ -7,7 +7,9 @@ const RootLayout = () => {
                 <div className="h-screen">
                     <SideBar />
                 </div>
-                <Outlet />
+                <div className="py-2 px-6 w-full">
+                    <Outlet />
+                </div>
             </div>
         </>
     );

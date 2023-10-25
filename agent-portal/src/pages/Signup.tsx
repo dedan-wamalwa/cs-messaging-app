@@ -1,6 +1,6 @@
 import { Button, Label, Card, FileInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../components/content/Logo";
 const SignUp = () => {
     const [name, setName] = useState<string>();
@@ -15,6 +15,12 @@ const SignUp = () => {
     const [error1, setError1] = useState<string | null>();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const storedData = localStorage.getItem("userInfo");
+        if (storedData) {
+            navigate("/");
+        }
+    }, [navigate]);
     const submitDetails = async (): Promise<void> => {
         setLoading(true);
         setError1(null);
@@ -52,7 +58,6 @@ const SignUp = () => {
             }
 
             const data = await response.json();
-            localStorage.setItem("userInfo", JSON.stringify(data));
             setLoading(false);
 
             navigate("/sign_in", { state: email });

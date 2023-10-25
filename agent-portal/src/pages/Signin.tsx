@@ -1,7 +1,7 @@
 import { Button, Label, Card } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/content/Logo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const SignIn = () => {
     const location = useLocation();
     const [email, setEmail] = useState<string>();
@@ -9,7 +9,12 @@ const SignIn = () => {
     const [loading, setLoading] = useState<boolean>();
     const [error, setError] = useState<string | null>();
     const navigate = useNavigate();
-
+    useEffect(() => {
+        const storedData = localStorage.getItem("userInfo");
+        if (storedData) {
+            navigate("/");
+        }
+    }, [navigate]);
     const submitDetails = async (): Promise<void> => {
         setLoading(true);
         if (!email || !password) {
@@ -17,6 +22,7 @@ const SignIn = () => {
             setLoading(false);
             return;
         }
+        const role = "Agent";
         try {
             const api = import.meta.env.VITE_PUBLIC_API_HOST;
             const response = await fetch(`${api}/api/users/login`, {
@@ -27,6 +33,7 @@ const SignIn = () => {
                 body: JSON.stringify({
                     email,
                     password,
+                    role,
                 }),
             });
             if (response.status === 401) {

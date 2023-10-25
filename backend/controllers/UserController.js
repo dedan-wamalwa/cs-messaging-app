@@ -46,9 +46,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // POST /api/users/login
 const authUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, role });
     if (user && (await user.matchPassword(password))) {
         res.json({
             _id: user._id,
@@ -85,10 +85,10 @@ const getUserDetails = asyncHandler(async (req, res) => {
             messages: user.messages,
             phone: user.phone,
             createdAt: user.createdAt,
-            phone: user.phone,
             employmentStatus: user.employmentStatus,
             loanLimit: user.loanLimit,
             availableLimit: user.availableLimit,
+            profilePhotoPath:user.profilePhotoPath
         });
     } catch (error) {
         console.error(error);

@@ -9,9 +9,13 @@ const getMessages = asyncHandler(async (req, res) => {
           }
         : {};
     try {
-        const messages = await Message.find(keyword);
-        res.send(messages);
+        const messages = await Message.find(keyword)
+            .find({ isRead: false, isCustomerMessage: true })
+            .populate("sender", "-password")
+            .populate("customer", "-password");
+        res.json(messages);
     } catch (error) {
+        console.error(error);
         res.status(500);
         throw new Error("Server Error");
     }
@@ -43,7 +47,7 @@ const getCustomerMessages = asyncHandler(async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const messages = await Message.find({ customer: user._id });
+        const messages = await Message.find({ customer: user._id }).populate("sender", "-password").sort({ createdAt: 1 });
         res.json(messages);
     } catch (error) {
         console.error(error);
@@ -54,10 +58,10 @@ const getCustomerMessages = asyncHandler(async (req, res) => {
 
 // POST /api/messages/
 const postMessage = asyncHandler(async (req, res) => {
-    const { customer, description, sender, attachmentPath } = req.body;
+    const { customer, description, sender, attachmentPath, isCustomerMessage } = req.body;
     if (!description) {
         res.status(400);
-        throw new Error("Please provide message body");
+        throw new Error("Bad request");
     }
     try {
         if (customer === sender) {
@@ -67,7 +71,7 @@ const postMessage = asyncHandler(async (req, res) => {
             }
         } else {
             const idValues = [customer, sender];
-            const users = await User.find({ $in: idValues.map(mongoose.Types.ObjectId) });
+            const users = await User.find({ _id: { $in: idValues } });
             if (users.length < 2) {
                 return res.status(404).json({ error: "User not found" });
             }
@@ -77,6 +81,7 @@ const postMessage = asyncHandler(async (req, res) => {
             description,
             sender,
             attachmentPath,
+            isCustomerMessage,
         });
         if (message) {
             res.status(201).json({
@@ -86,6 +91,7 @@ const postMessage = asyncHandler(async (req, res) => {
                 sender: message.sender,
                 attachmentPath: message.attachmentPath,
                 createdAt: message.createdAt,
+                isCustomerMessage: message.isCustomerMessage,
             });
         }
     } catch (error) {

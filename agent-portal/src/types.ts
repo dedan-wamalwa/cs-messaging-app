@@ -9,9 +9,9 @@ export type user = {
     name?: string;
     email?: string;
     password?: string;
-    createdAt?: Date;
+    createdAt?: string;
     role?: string;
-    messages?: message[];
+    messages?: message[] | string[];
     loanLimit?: Number;
     availableLimit?: Number;
     employmentStatus?: string;
@@ -20,16 +20,22 @@ export type user = {
 };
 export type message = {
     _id: string;
-    customerId?: string;
-    customer?: user;
-    createdAt?: Date;
+    customer?: user | string;
+    createdAt?: string;
     priority?: Number;
     category?: string;
     description?: string;
     isRead?: boolean;
-    assigneeId?: string;
-    assignee?: user;
-    senderId?: string;
-    sender?: user;
+    assignee?: user | string;
+    sender?: user | string;
     attachmentPath?: string;
+};
+
+export type messageContextType = {
+    user: user;
+    setUser: React.Dispatch<React.SetStateAction<user>>;
+};
+
+export type Params = {
+    id: string;
 };
