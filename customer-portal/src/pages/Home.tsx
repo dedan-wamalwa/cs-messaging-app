@@ -1,14 +1,18 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { message, user } from "../types";
 import Message from "../components/content/Message";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Textarea } from "flowbite-react";
 const Home = () => {
-    const messages: message[] = (useLoaderData() as message[]) || [];
+    const _messages: message[] = (useLoaderData() as message[]) || [];
+    const [messages, setMessages] = useState<message[]>(_messages);
+
     const [description, setDescription] = useState<string>();
 
     const [showChat, setShowChat] = useState<boolean>(true);
     const navigate = useNavigate();
+    const chatRef = useRef<null | HTMLFormElement>(null);
+
     useEffect(() => {
         const storedData = localStorage.getItem("userInfo");
         if (!storedData) {
@@ -34,7 +38,6 @@ const Home = () => {
             attachmentPath: "",
             isCustomerMessage: true,
         };
-        console.log(data);
         try {
             const api = import.meta.env.VITE_PUBLIC_API_HOST;
             const response = await fetch(`${api}/api/messages`, {
@@ -63,6 +66,9 @@ const Home = () => {
     const getImageUrl = (sender: user) => {
         return sender.profilePhotoPath;
     };
+    useEffect(() => {
+        chatRef.current?.scrollIntoView();
+    }, [messages]);
     return (
         <>
             <div className="w-full ">
@@ -90,7 +96,7 @@ const Home = () => {
                             />
                         ))}
                     </ul>
-                    <form className="mt-auto flex flex-col gap-2" onSubmit={(event) => event.preventDefault()}>
+                    <form className="mt-auto flex flex-col gap-2" onSubmit={(event) => event.preventDefault()} ref={chatRef}>
                         <div className="flex gap-1 max-w-lg pt-2" id="textarea">
                             <Textarea
                                 id="comment"

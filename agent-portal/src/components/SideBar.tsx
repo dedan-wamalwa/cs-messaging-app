@@ -16,7 +16,7 @@ export default function DefaultSidebar() {
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         <p>Home</p>
                     </Sidebar.Item>
-                    <Sidebar.Item href="/inbox" icon={HiInbox} label="3">
+                    <Sidebar.Item href="/inbox" icon={HiInbox}>
                         <p>Inbox</p>
                     </Sidebar.Item>
                     <Sidebar.Item href="#" icon={HiUser}>
