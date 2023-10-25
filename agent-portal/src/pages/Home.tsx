@@ -1,6 +1,6 @@
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { message, user } from "../types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Table } from "flowbite-react";
 import Message from "../components/messages/Message";
 import dayjs from "dayjs";
@@ -8,14 +8,18 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 const Home = () => {
+    const _messages: message[] = (useLoaderData() as message[]) || [];
     const storedData = localStorage.getItem("userInfo");
+
+    const userDetails = storedData ? JSON.parse(storedData) : { _id: "000000000000000000000000" };
+    const [messages, setMessages] = useState<message[]>(_messages);
+
     const navigate = useNavigate();
     useEffect(() => {
         if (!storedData) {
             navigate("/sign_in");
         }
     }, [navigate]);
-    const messages: message[] = (useLoaderData() as message[]) || [];
 
     const calculateRelativeTime = (date: string) => {
         const now = dayjs();

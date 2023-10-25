@@ -3,7 +3,7 @@ import ChatMessage from "../components/messages/ChatMessage";
 import { useLoaderData, useParams } from "react-router-dom";
 import { message, user, Params } from "../types";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DropdownItem } from "flowbite-react/lib/esm/components/Dropdown/DropdownItem";
 const ChatBox = () => {
     const messages: message[] = (useLoaderData() as message[]) || [];
@@ -16,6 +16,7 @@ const ChatBox = () => {
 
     const [openModal, setOpenModal] = useState<string | undefined>();
     const props = { openModal, setOpenModal };
+    const chatRef = useRef<null | HTMLFormElement>(null);
 
     useEffect(() => {
         const getCustomerDetails = async (): Promise<void> => {
@@ -25,7 +26,6 @@ const ChatBox = () => {
                 const response = await fetch(`${url}/api/users/${id}`);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
                     setCustomerData(data);
                     setLoading(false);
                 }
@@ -88,8 +88,12 @@ const ChatBox = () => {
     const getDateTime = (date: string) => {
         return dayjs(date).format("MMM D h:mm A");
     };
+    useEffect(() => {
+        chatRef.current?.scrollIntoView();
+    }, [messages]);
+
     return (
-        <div>
+        <div className="border">
             <Card className="px-4 flex flex-col">
                 <div className="ml-1">
                     <button onClick={() => props.setOpenModal("default")}>
@@ -107,7 +111,7 @@ const ChatBox = () => {
                         key={message._id}
                     />
                 ))}
-                <form className="mt-auto flex flex-col gap-2" onSubmit={(event) => event.preventDefault()}>
+                <form className="mt-auto flex flex-col gap-2" onSubmit={(event) => event.preventDefault()} ref={chatRef}>
                     <div className="flex gap-1 max-w-lg" id="textarea">
                         <Textarea
                             id="comment"
