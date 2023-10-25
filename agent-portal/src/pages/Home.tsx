@@ -10,6 +10,7 @@ dayjs.extend(relativeTime);
 const Home = () => {
     const _messages: message[] = (useLoaderData() as message[]) || [];
     const storedData = localStorage.getItem("userInfo");
+
     const userDetails = storedData ? JSON.parse(storedData) : { _id: "000000000000000000000000" };
     const [messages, setMessages] = useState<message[]>(_messages);
 

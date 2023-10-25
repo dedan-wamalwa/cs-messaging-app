@@ -47,13 +47,11 @@ const Home = () => {
                 },
                 body: JSON.stringify(data),
             });
-            if (response.status === 401) {
-                return;
-            }
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            setDescription("");
         } catch (error: any | unknown) {
             console.error("Error:", error.message);
             throw error;
@@ -103,6 +101,7 @@ const Home = () => {
                                 placeholder="Write your message here..."
                                 required
                                 rows={2}
+                                value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                             />
                             <button type="submit" onClick={submitDetails}>
@@ -127,7 +126,11 @@ const Home = () => {
 };
 export const messagesLoader = async () => {
     const api = import.meta.env.VITE_PUBLIC_API_HOST;
-    const { _id } = JSON.parse(localStorage.getItem("userInfo") as string);
+    const storedData = localStorage.getItem("userInfo");
+    if (!storedData) {
+        return [];
+    }
+    const { _id } = JSON.parse(storedData as string);
     try {
         const response = await fetch(`${api}/api/messages/customer/${_id}`);
         if (!response.ok) {

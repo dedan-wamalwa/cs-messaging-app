@@ -1,4 +1,4 @@
-import { Card, Textarea, Modal, Dropdown, Avatar } from "flowbite-react";
+import { Card, Textarea, Modal, Dropdown } from "flowbite-react";
 import ChatMessage from "../components/messages/ChatMessage";
 import { useLoaderData, useParams } from "react-router-dom";
 import { message, user, Params } from "../types";
@@ -72,6 +72,7 @@ const ChatBox = () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            setDescription("");
         } catch (error: any | unknown) {
             console.error("Error:", error.message);
             throw error;
@@ -117,6 +118,7 @@ const ChatBox = () => {
                             placeholder="Write your message here..."
                             required
                             rows={2}
+                            value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
                         <button type="submit" onClick={submitDetails}>
