@@ -1,8 +1,17 @@
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "./content/Logo";
 const NavBar = () => {
-    const profUrl = import.meta.env.VITE_DEFAULT_PROFILE_URL
+    const profUrl = import.meta.env.VITE_DEFAULT_PROFILE_URL;
+    const storedData = localStorage.getItem("userInfo");
+    const userData = storedData ? JSON.parse(storedData) : null;
+    const navigate = useNavigate();
+    const handleAuth = () => {
+        if (userData) {
+            localStorage.removeItem("userInfo");
+        }
+        navigate("/sign_in");
+    };
     return (
         <Navbar fluid rounded className="sm:py-6">
             <Navbar.Brand href="/">
@@ -12,16 +21,18 @@ const NavBar = () => {
                 <Dropdown
                     arrowIcon={false}
                     inline
-                    label={<Avatar alt="User settings" img={profUrl} rounded />}
+                    label={<Avatar alt="User settings" img={userData ? userData.profilePhotoPath : profUrl} rounded />}
                 >
-                    <Dropdown.Header>
-                        <span className="block text-sm">Dedan Wamalwa</span>
-                        <span className="block truncate text-sm font-medium"></span>
-                    </Dropdown.Header>
-                    <Dropdown.Item>Dashboard</Dropdown.Item>
-                    <Dropdown.Item>Settings</Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item>Sign out</Dropdown.Item>
+                    {userData && (
+                        <>
+                            <Dropdown.Header>
+                                <span className="block text-sm">{userData.name}</span>
+                            </Dropdown.Header>
+                            <Dropdown.Item>Settings</Dropdown.Item>
+                            <Dropdown.Divider />
+                        </>
+                    )}
+                    <Dropdown.Item onClick={handleAuth}>{userData ? "Sign Out" : "Sign In"}</Dropdown.Item>
                 </Dropdown>
                 <Navbar.Toggle />
             </div>
