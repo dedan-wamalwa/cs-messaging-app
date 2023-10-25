@@ -7,8 +7,8 @@ interface MyComponentProps {
 }
 function ChatMessage(props: MyComponentProps) {
     return (
-        <div className="flex gap-1 ">
-            <Avatar alt="avatar of Jese" img={props.profilePhotoPath} rounded className="shrink-0" />
+        <div className="flex gap-2 border-y py-1">
+            <Avatar alt="avatar of Jese" img={props.profilePhotoPath} rounded className="shrink-0" size={"sm"} />
             <div className="max-w-3/4">
                 <div className="flex gap-1">
                     <div>
