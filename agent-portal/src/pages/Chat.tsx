@@ -1,4 +1,5 @@
 import { Card, Textarea, Modal, Dropdown } from "flowbite-react";
+import ScrollableFeed from "react-scrollable-feed";
 import ChatMessage from "../components/messages/ChatMessage";
 import { useLoaderData, useParams } from "react-router-dom";
 import { message, user, Params } from "../types";
@@ -93,42 +94,44 @@ const ChatBox = () => {
     }, [messages]);
 
     return (
-        <div className="border">
-            <Card className="px-4 flex flex-col">
+        <>
+            <Card className="flex flex-col lg:w-3/5 lg:ml-3 rounded-md">
                 <div className="ml-1">
                     <button onClick={() => props.setOpenModal("default")}>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 448 512">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 448 512">
                             <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
                         </svg>
                     </button>
                 </div>
-                {messages.map((message) => (
-                    <ChatMessage
-                        profilePhotoPath={getProfilePath(message.sender as user)}
-                        senderName={getSenderName(message.sender as user)}
-                        description={message.description}
-                        time={getDateTime(message.createdAt as string)}
-                        key={message._id}
-                    />
-                ))}
-                <form className="mt-auto flex flex-col gap-2" onSubmit={(event) => event.preventDefault()} ref={chatRef}>
-                    <div className="flex gap-1 max-w-lg" id="textarea">
-                        <Textarea
-                            id="comment"
-                            placeholder="Write your message here..."
-                            required
-                            rows={2}
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                <ScrollableFeed>
+                    {messages.map((message) => (
+                        <ChatMessage
+                            profilePhotoPath={getProfilePath(message.sender as user)}
+                            senderName={getSenderName(message.sender as user)}
+                            description={message.description}
+                            time={getDateTime(message.createdAt as string)}
+                            key={message._id}
                         />
-                        <button type="submit" onClick={submitDetails}>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                                <style>svg{"fill:#421dc9"}</style>
-                                <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
-                            </svg>
-                        </button>
-                    </div>
-                </form>
+                    ))}
+                    <form className="mt-auto flex flex-col gap-2 py-2" onSubmit={(event) => event.preventDefault()} ref={chatRef}>
+                        <div className="flex gap-1 max-w-lg" id="textarea">
+                            <Textarea
+                                id="comment"
+                                placeholder="Write your message here..."
+                                required
+                                rows={2}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                            <button type="submit" onClick={submitDetails}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                                    <style>svg{"fill:#421dc9"}</style>
+                                    <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </ScrollableFeed>
             </Card>
 
             {/* modal */}
@@ -211,7 +214,7 @@ const ChatBox = () => {
                     </div>
                 </Card>
             </Modal>
-        </div>
+        </>
     );
 };
 
