@@ -1,7 +1,7 @@
 import { Card, Textarea, Modal, Dropdown } from "flowbite-react";
 import ScrollableFeed from "react-scrollable-feed";
 import ChatMessage from "../components/messages/ChatMessage";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useParams, useLocation } from "react-router-dom";
 import { message, user, Params, ServerToClientEvents, ClientToServerEvents } from "../types";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +12,7 @@ const ENDPOINT = import.meta.env.VITE_PUBLIC_API_HOST;
 var socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 const ChatBox = () => {
     const { id } = useParams();
+    const { messageId } = useLocation().state;
 
     const storedData = localStorage.getItem("userInfo");
     const userDetails = JSON.parse(storedData as string);
