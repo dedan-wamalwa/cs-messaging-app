@@ -45,7 +45,6 @@ const ChatBox = () => {
     };
 
     const getCustomerMessages = async (): Promise<void> => {
-        console.log();
         const api = import.meta.env.VITE_PUBLIC_API_HOST;
         try {
             const response = await fetch(`${api}/api/messages/customer/${id}`);
@@ -126,7 +125,6 @@ const ChatBox = () => {
         socket.on("messageReceived", (newMessageRecieved: message) => {
             if (newMessageRecieved.customer == id) {
                 setMessages([...messages, newMessageRecieved]);
-                console.log("New msg received:" + newMessageRecieved);
             }
         });
     });

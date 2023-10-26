@@ -1,29 +1,44 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { message, user } from "../types";
+import { ClientToServerEvents, ServerToClientEvents, message, user } from "../types";
 import Message from "../components/content/Message";
 import { useEffect, useRef, useState } from "react";
 import { Textarea } from "flowbite-react";
+import { io, Socket } from "socket.io-client";
+
+const ENDPOINT = import.meta.env.VITE_PUBLIC_API_HOST;
+var socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 const Home = () => {
+    const navigate = useNavigate();
     const _messages: message[] = (useLoaderData() as message[]) || [];
+    const storedData: string | null = localStorage.getItem("userInfo");
+    const userDetails: user = storedData ? JSON.parse(storedData) : navigate("/sign_in");
     const [messages, setMessages] = useState<message[]>(_messages);
+    const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
     const [description, setDescription] = useState<string>();
 
     const [showChat, setShowChat] = useState<boolean>(true);
-    const navigate = useNavigate();
     const chatRef = useRef<null | HTMLFormElement>(null);
 
     useEffect(() => {
-        const storedData = localStorage.getItem("userInfo");
         if (!storedData) {
             navigate("/sign_in");
         }
     }, [navigate]);
+
     const showChatBox = () => {
         setShowChat((a) => !a);
     };
 
-    const submitDetails = async (): Promise<void> => {
+    useEffect(() => {
+        socket = io(ENDPOINT);
+        socket.emit("setup", userDetails);
+        socket.on("connection", () => {
+            setSocketConnected(true);
+        });
+        socket.emit("joinChat", userDetails._id as string);
+    }, []);
+    const sendMessage = async (): Promise<void> => {
         if (!description) {
             return;
         }
@@ -31,7 +46,7 @@ const Home = () => {
         if (!storedData) {
             return;
         }
-        const data = {
+        const body = {
             sender: storedData._id,
             description,
             customer: storedData._id,
@@ -45,13 +60,15 @@ const Home = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(body),
             });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            const data = await response.json();
             setDescription("");
+            socket.emit("newMessage", data);
         } catch (error: any | unknown) {
             console.error("Error:", error.message);
             throw error;
@@ -67,6 +84,14 @@ const Home = () => {
     useEffect(() => {
         chatRef.current?.scrollIntoView();
     }, [messages]);
+
+    useEffect(() => {
+        socket.on("messageReceived", (newMessageRecieved: message) => {
+            if (newMessageRecieved.customer == userDetails._id) {
+                setMessages([...messages, newMessageRecieved]);
+            }
+        });
+    });
     return (
         <>
             <div className="w-full ">
@@ -104,7 +129,7 @@ const Home = () => {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                             />
-                            <button type="submit" onClick={submitDetails}>
+                            <button type="submit" onClick={sendMessage}>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
                                     <style>svg{"fill:#421dc9"}</style>
                                     <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />

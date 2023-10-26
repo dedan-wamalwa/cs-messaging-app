@@ -3,8 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/content/Logo";
 import { useEffect, useState } from "react";
 const SignIn = () => {
-    const location = useLocation();
-    const [email, setEmail] = useState<string>();
+    const [email, setEmail] = useState<string>(useLocation().state || "");
     const [password, setPassword] = useState<string>();
     const [loading, setLoading] = useState<boolean>();
     const [error, setError] = useState<string | null>();
@@ -78,7 +77,7 @@ const SignIn = () => {
                             required
                             type="email"
                             placeholder="e.g. name@gmail.com"
-                            value={location.state}
+                            value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
