@@ -1,16 +1,22 @@
 import { Card, Textarea, Modal, Dropdown } from "flowbite-react";
 import ChatMessage from "../components/messages/ChatMessage";
 import { useLoaderData, useParams } from "react-router-dom";
-import { message, user, Params } from "../types";
+import { message, user, Params, ServerToClientEvents, ClientToServerEvents } from "../types";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { DropdownItem } from "flowbite-react/lib/esm/components/Dropdown/DropdownItem";
+import { io, Socket } from "socket.io-client";
+
+const ENDPOINT = import.meta.env.VITE_PUBLIC_API_HOST;
+var socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 const ChatBox = () => {
-    const messages: message[] = (useLoaderData() as message[]) || [];
     const { id } = useParams();
 
+    const storedData = localStorage.getItem("userInfo");
+    const userDetails = JSON.parse(storedData as string);
+    const [messages, setMessages] = useState<message[]>(useLoaderData() as message[]);
     const [description, setDescription] = useState<string>();
-
+    const [socketConnected, setSocketConnected] = useState<boolean>(false);
     const [customerData, setCustomerData] = useState<user | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -18,30 +24,53 @@ const ChatBox = () => {
     const props = { openModal, setOpenModal };
     const chatRef = useRef<null | HTMLFormElement>(null);
 
-    useEffect(() => {
-        const getCustomerDetails = async (): Promise<void> => {
-            setLoading(true);
-            try {
-                const url = import.meta.env.VITE_PUBLIC_API_HOST;
-                const response = await fetch(`${url}/api/users/${id}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setCustomerData(data);
-                    setLoading(false);
-                }
-                if (response.status === 401) {
-                    throw new Error("user does not exist");
-                }
-            } catch (error) {
-                console.error("Error:", error);
+    const getCustomerDetails = async (): Promise<void> => {
+        setLoading(true);
+        try {
+            const url = import.meta.env.VITE_PUBLIC_API_HOST;
+            const response = await fetch(`${url}/api/users/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setCustomerData(data);
                 setLoading(false);
-                throw error;
             }
-        };
+            if (response.status === 401) {
+                throw new Error("user does not exist");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            setLoading(false);
+            throw error;
+        }
+    };
+
+    const getCustomerMessages = async (): Promise<void> => {
+        console.log();
+        const api = import.meta.env.VITE_PUBLIC_API_HOST;
+        try {
+            const response = await fetch(`${api}/api/messages/customer/${id}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const _messages = await response.json();
+            setMessages(_messages);
+
+            socket.emit("joinChat", id as string);
+        } catch (error) {
+            console.error("Error:", error);
+            throw error;
+        }
+    };
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+        socket.emit("setup", userDetails);
+        socket.on("connection", () => {
+            setSocketConnected(true);
+        });
         getCustomerDetails();
     }, []);
-
-    const submitDetails = async (): Promise<void> => {
+    const sendMessage = async (): Promise<void> => {
         if (!description) {
             return;
         }
@@ -49,7 +78,7 @@ const ChatBox = () => {
         if (!storedData) {
             return;
         }
-        const data = {
+        const body = {
             sender: storedData._id,
             description,
             customer: id,
@@ -63,7 +92,7 @@ const ChatBox = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(body),
             });
             if (response.status === 401) {
                 return;
@@ -72,7 +101,9 @@ const ChatBox = () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            const data = await response.json();
             setDescription("");
+            socket.emit("newMessage", data);
         } catch (error: any | unknown) {
             console.error("Error:", error.message);
             throw error;
@@ -91,6 +122,14 @@ const ChatBox = () => {
     useEffect(() => {
         chatRef.current?.scrollIntoView();
     }, [messages]);
+
+    useEffect(() => {
+        socket.on("messageReceived", (newMessageRecieved: message) => {
+            if (newMessageRecieved.customer == id) {
+                setMessages([...messages, newMessageRecieved]);
+            }
+        });
+    });
 
     return (
         <div className="border">
@@ -121,7 +160,7 @@ const ChatBox = () => {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        <button type="submit" onClick={submitDetails}>
+                        <button type="submit" onClick={sendMessage}>
                             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
                                 <style>svg{"fill:#421dc9"}</style>
                                 <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />

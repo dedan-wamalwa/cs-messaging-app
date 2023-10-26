@@ -72,7 +72,6 @@ const getUserDetails = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findOne({ _id: id }).populate("messages");
-        console.log(`User: ${user}`);
 
         if (!user) {
             return res.status(404).json({ error: "User not found" });
