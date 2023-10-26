@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
         console.log(`new message received:${newMessageReceived}`);
         if (!customer) return console.log("message not tied to customer");
         socket.in(customer).emit("messageReceived", newMessageReceived);
-        if (newMessageReceived.isCustomerMessage) {
+        if (newMessageReceived.isCustomerMessage && !newMessageReceived.isRead) {
             socket.in(DEFAULT_COMPANY_ID).emit("customerMessageReceived", newMessageReceived);
         }
     });
