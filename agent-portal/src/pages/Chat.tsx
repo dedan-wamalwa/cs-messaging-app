@@ -1,10 +1,11 @@
 import { Card, Textarea, Modal, Dropdown, Button } from "flowbite-react";
 import ScrollableFeed from "react-scrollable-feed";
 import ChatMessage from "../components/messages/ChatMessage";
-import { useLoaderData, useParams, useLocation, useNavigate } from "react-router-dom";
+import { useLoaderData, useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import { message, user, Params, ServerToClientEvents, ClientToServerEvents } from "../types";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
+import "../App.css";
 import { DropdownItem } from "flowbite-react/lib/esm/components/Dropdown/DropdownItem";
 import { io, Socket } from "socket.io-client";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -13,8 +14,8 @@ const ENDPOINT = import.meta.env.VITE_PUBLIC_API_HOST;
 var socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 const ChatBox = () => {
     const { id } = useParams();
-    const { messageId } = useLocation().state;
     const navigate = useNavigate();
+    const location = useLocation().state;
 
     const storedData = localStorage.getItem("userInfo");
     const userDetails = JSON.parse(storedData as string);
@@ -51,6 +52,10 @@ const ChatBox = () => {
 
     useEffect(() => {
         const checkIfMessageIsRead = async (): Promise<void> => {
+            if (!location) {
+                navigate("/");
+            }
+            const { messageId } = location;
             const api = import.meta.env.VITE_PUBLIC_API_HOST;
             try {
                 const response = await fetch(`${api}/api/messages/check-status/${messageId}`);
@@ -144,13 +149,20 @@ const ChatBox = () => {
 
     return (
         <>
-            <Card className="flex flex-col lg:w-3/5 lg:ml-3 rounded-md">
+            <Card className="flex flex-col lg:w-3/5 lg:ml-3 rounded-md chat-box">
                 <div className="ml-1">
-                    <button onClick={getCustomerDetails}>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 448 512">
-                            <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
-                        </svg>
-                    </button>
+                    <div className="flex">
+                        <Link to="/">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 512 512">
+                                <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 480 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-370.7 0 73.4-73.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-128 128z" />
+                            </svg>
+                        </Link>
+                        <button onClick={getCustomerDetails} className="ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 448 512">
+                                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <ScrollableFeed>
                     {messages.map((message) => (

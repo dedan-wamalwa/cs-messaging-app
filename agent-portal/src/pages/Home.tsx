@@ -59,14 +59,13 @@ const Home = () => {
         <>
             <Table hoverable>
                 <Table.Head>
-                    <Table.HeadCell>Messages</Table.HeadCell>
                 </Table.Head>
                 <TextInput
                     id="base"
                     sizing="md"
                     type="email"
-                    placeholder="Search"
-                    className="px-5 md:w-3/4"
+                    placeholder="Search messages.."
+                    className="px-5 md:w-3/4 mb-1"
                     onChange={(e) => setSearch(e.target.value)}
                 />
                 <Table.Body className="divide-y">

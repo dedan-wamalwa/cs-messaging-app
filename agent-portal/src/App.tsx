@@ -5,12 +5,13 @@ import Home, { messagesLoader } from "./pages/Home";
 import Chat, { customerMessagesLoader } from "./pages/Chat";
 import RootLayout from "./layouts/RootLayout";
 import NotFound from "./pages/NotFound";
+import ErrorHandler from "./pages/ErrorHandler";
 const router = createBrowserRouter(
     createRoutesFromElements(
         <>
-            <Route path="/" element={<RootLayout />}>
+            <Route path="/" element={<RootLayout />} errorElement={<ErrorHandler />}>
                 <Route index element={<Home />} loader={messagesLoader} />
-                <Route path="/chats/:id" element={<Chat />}  loader={customerMessagesLoader}/>
+                <Route path="/chats/:id" element={<Chat />} loader={customerMessagesLoader} />
             </Route>
             <Route path="/sign_up" element={<SignUp />} />
             <Route path="/sign_in" element={<SignIn />} />
