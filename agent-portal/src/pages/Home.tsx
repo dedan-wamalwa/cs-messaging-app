@@ -30,6 +30,7 @@ const Home = () => {
         socket.on("connection", () => {
             setSocketConnected(true);
         });
+        socket.emit("agentLogIn", userDetails._id)
     }, []);
 
     const calculateRelativeTime = (date: string) => {

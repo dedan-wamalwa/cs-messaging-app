@@ -54,8 +54,6 @@ const ChatBox = () => {
             }
             const _messages = await response.json();
             setMessages(_messages);
-
-            socket.emit("joinChat", id as string);
         } catch (error) {
             console.error("Error:", error);
             throw error;
@@ -68,6 +66,7 @@ const ChatBox = () => {
         socket.on("connection", () => {
             setSocketConnected(true);
         });
+        socket.emit("joinChat", id as string);
         getCustomerDetails();
     }, []);
     const sendMessage = async (): Promise<void> => {
@@ -127,6 +126,7 @@ const ChatBox = () => {
         socket.on("messageReceived", (newMessageRecieved: message) => {
             if (newMessageRecieved.customer == id) {
                 setMessages([...messages, newMessageRecieved]);
+                console.log("New msg received:" + newMessageRecieved);
             }
         });
     });

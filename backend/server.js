@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
 
     socket.on("newMessage", (newMessageReceived) => {
         const customer = newMessageReceived.customer;
-
+        console.log(`new message received:${newMessageReceived}`);
         if (!customer) return console.log("message not tied to customer");
         socket.in(customer).emit("messageReceived", newMessageReceived);
         if (newMessageReceived.isCustomerMessage) {
