@@ -10,7 +10,7 @@ const router = createBrowserRouter(
         <>
             <Route path="/" element={<RootLayout />}>
                 <Route index element={<Home />} loader={messagesLoader} />
-                <Route path="/chats/:id" element={<Chat />} loader={customerMessagesLoader} />
+                <Route path="/chats/:id" element={<Chat />}  loader={customerMessagesLoader}/>
             </Route>
             <Route path="/sign_up" element={<SignUp />} />
             <Route path="/sign_in" element={<SignIn />} />

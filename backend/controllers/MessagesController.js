@@ -76,24 +76,10 @@ const postMessage = asyncHandler(async (req, res) => {
                 return res.status(404).json({ error: "User not found" });
             }
         }
-        const message = await Message.create({
-            customer,
-            description,
-            sender,
-            attachmentPath,
-            isCustomerMessage,
-        });
-        if (message) {
-            res.status(201).json({
-                _id: message._id,
-                customer: message.customer,
-                description: message.description,
-                sender: message.sender,
-                attachmentPath: message.attachmentPath,
-                createdAt: message.createdAt,
-                isCustomerMessage: message.isCustomerMessage,
-            });
-        }
+        const message = new Message(req.body);
+        const messageSent = await message.save();
+        const _message = await Message.findOne({ _id: messageSent._id }).populate("sender", "-password");
+        res.json(_message);
     } catch (error) {
         console.error(error);
         res.status(500);

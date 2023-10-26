@@ -1,25 +1,37 @@
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { message, user } from "../types";
+import { message, user, ServerToClientEvents, ClientToServerEvents } from "../types";
 import { useEffect, useState } from "react";
 import { Table } from "flowbite-react";
 import Message from "../components/messages/Message";
+import { io, Socket } from "socket.io-client";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
+const ENDPOINT = import.meta.env.VITE_PUBLIC_API_HOST;
+var socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 const Home = () => {
+    const navigate = useNavigate();
     const _messages: message[] = (useLoaderData() as message[]) || [];
     const storedData = localStorage.getItem("userInfo");
-
-    const userDetails = storedData ? JSON.parse(storedData) : { _id: "000000000000000000000000" };
+    const userDetails = JSON.parse(storedData as string);
     const [messages, setMessages] = useState<message[]>(_messages);
+    const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
-    const navigate = useNavigate();
     useEffect(() => {
         if (!storedData) {
             navigate("/sign_in");
         }
-    }, [navigate]);
+    }, []);
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+        socket.emit("setup", userDetails);
+        socket.on("connection", () => {
+            setSocketConnected(true);
+        });
+        socket.emit("agentLogIn", userDetails._id)
+    }, []);
 
     const calculateRelativeTime = (date: string) => {
         const now = dayjs();
@@ -35,6 +47,13 @@ const Home = () => {
     const getCustomerId = (customer: user) => {
         return customer._id;
     };
+    useEffect(() => {
+        socket.on("customerMessageReceived", (newMessageRecieved: message) => {
+            if (newMessageRecieved.isCustomerMessage) {
+                setMessages([...messages, newMessageRecieved]);
+            }
+        });
+    });
     return (
         <>
             <Table hoverable>

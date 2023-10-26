@@ -29,6 +29,7 @@ export type message = {
     assignee?: user | string;
     sender?: user | string;
     attachmentPath?: string;
+    isCustomerMessage?: boolean;
 };
 
 export type messageContextType = {
@@ -38,4 +39,20 @@ export type messageContextType = {
 
 export type Params = {
     id: string;
+};
+
+// socket.io types
+export type ServerToClientEvents = {
+    connection: () => void;
+    basicEmit: (a: number, b: string, c: Buffer) => void;
+    withAck: (d: string, callback: (e: number) => void) => void;
+    messageReceived: (messageReceived: message) => void;
+    customerMessageReceived: (customerMessage: message) => void;
+};
+
+export type ClientToServerEvents = {
+    setup: (user: user) => void;
+    joinChat: (customerId: string) => void;
+    newMessage: (messageSent: message) => void;
+    agentLogIn: (agentId: string) => void;
 };
