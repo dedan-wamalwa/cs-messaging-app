@@ -9,7 +9,7 @@ const Message = (props: MyComponentProps) => {
     return (
         <>
             <div className="flex gap-1">
-                <Avatar alt="avatar of Jese" img={props.profilePhotoPath} rounded className="shrink-0" />
+                <Avatar alt="avatar of Jese" img={props.profilePhotoPath} rounded className="shrink-0" size="xs" />
                 <div className="max-w-xl truncate">
                     <div>
                         <small className="">{props.senderName}</small>
