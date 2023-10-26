@@ -128,4 +128,32 @@ const getAssignedMessages = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { getMessageDetails, getMessages, getCustomerMessages, postMessage, assignMessage, getAssignedMessages };
+// GET /api/messages/check-status/:id
+const checkIfMessageIsRead = asyncHandler(async (req, res) => {
+    try {
+        const { id } = req.params;
+        const message = await Message.findById(id);
+        if (!message) {
+            return res.status(404).json({ error: "Message not found" });
+        }
+        if (message.isRead) {
+            return res.json({ wasRead: message.isRead });
+        } else {
+            message.isRead = true;
+            _ = await message.save();
+            return res.json({ wasRead: false });
+        }
+    } catch (error) {
+        console.error(error);
+        throw new Error(`Error: ${error.message}`);
+    }
+});
+module.exports = {
+    getMessageDetails,
+    getMessages,
+    getCustomerMessages,
+    postMessage,
+    assignMessage,
+    getAssignedMessages,
+    checkIfMessageIsRead,
+};

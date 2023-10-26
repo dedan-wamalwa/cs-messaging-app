@@ -1,17 +1,20 @@
-import { Card, Textarea, Modal, Dropdown } from "flowbite-react";
+import { Card, Textarea, Modal, Dropdown, Button } from "flowbite-react";
 import ScrollableFeed from "react-scrollable-feed";
 import ChatMessage from "../components/messages/ChatMessage";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useParams, useLocation, useNavigate } from "react-router-dom";
 import { message, user, Params, ServerToClientEvents, ClientToServerEvents } from "../types";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { DropdownItem } from "flowbite-react/lib/esm/components/Dropdown/DropdownItem";
 import { io, Socket } from "socket.io-client";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const ENDPOINT = import.meta.env.VITE_PUBLIC_API_HOST;
 var socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 const ChatBox = () => {
     const { id } = useParams();
+    const { messageId } = useLocation().state;
+    const navigate = useNavigate();
 
     const storedData = localStorage.getItem("userInfo");
     const userDetails = JSON.parse(storedData as string);
@@ -27,6 +30,7 @@ const ChatBox = () => {
 
     const getCustomerDetails = async (): Promise<void> => {
         setLoading(true);
+        props.setOpenModal("default");
         try {
             const url = import.meta.env.VITE_PUBLIC_API_HOST;
             const response = await fetch(`${url}/api/users/${id}`);
@@ -45,20 +49,29 @@ const ChatBox = () => {
         }
     };
 
-    const getCustomerMessages = async (): Promise<void> => {
-        const api = import.meta.env.VITE_PUBLIC_API_HOST;
-        try {
-            const response = await fetch(`${api}/api/messages/customer/${id}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+    useEffect(() => {
+        const checkIfMessageIsRead = async (): Promise<void> => {
+            const api = import.meta.env.VITE_PUBLIC_API_HOST;
+            try {
+                const response = await fetch(`${api}/api/messages/check-status/${messageId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const { wasRead } = await response.json();
+                console.log(`was read:${wasRead}`);
+
+                if (wasRead) {
+                    props.setOpenModal("pop-up");
+                } else {
+                    return;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                throw error;
             }
-            const _messages = await response.json();
-            setMessages(_messages);
-        } catch (error) {
-            console.error("Error:", error);
-            throw error;
-        }
-    };
+        };
+        checkIfMessageIsRead();
+    }, []);
 
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -67,7 +80,6 @@ const ChatBox = () => {
             setSocketConnected(true);
         });
         socket.emit("joinChat", id as string);
-        getCustomerDetails();
     }, []);
     const sendMessage = async (): Promise<void> => {
         if (!description) {
@@ -134,7 +146,7 @@ const ChatBox = () => {
         <>
             <Card className="flex flex-col lg:w-3/5 lg:ml-3 rounded-md">
                 <div className="ml-1">
-                    <button onClick={() => props.setOpenModal("default")}>
+                    <button onClick={getCustomerDetails}>
                         <svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 448 512">
                             <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
                         </svg>
@@ -171,7 +183,7 @@ const ChatBox = () => {
                 </ScrollableFeed>
             </Card>
 
-            {/* modal */}
+            {/* user details modal */}
             <Modal dismissible show={props.openModal === "default"} onClose={() => props.setOpenModal(undefined)} size={"md"}>
                 <Modal.Header className="py-3">Customer Profile</Modal.Header>
                 <Card className="rounded-t-none">
@@ -250,6 +262,27 @@ const ChatBox = () => {
                         </div>
                     </div>
                 </Card>
+            </Modal>
+            {/* message has been read modal */}
+            <Modal show={props.openModal === "pop-up"} size="md" popup onClose={() => props.setOpenModal(undefined)}>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className="mx-auto m-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                            Seems this message has been opened by another Agent. If you have reloaded this page, please stay and follow up
+                            with the customer via phone call in 5 minutes. Otherwise, you can go back home.
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button gradientDuoTone="cyanToBlue" outline onClick={() => navigate("/")}>
+                                <p>Home</p>
+                            </Button>
+                            <Button gradientDuoTone="greenToBlue" outline onClick={() => props.setOpenModal(undefined)}>
+                                <p>Cancel</p>
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
             </Modal>
         </>
     );
