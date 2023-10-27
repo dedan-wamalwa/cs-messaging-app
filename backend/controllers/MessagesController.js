@@ -12,7 +12,6 @@ const getMessages = asyncHandler(async (req, res) => {
         const messages = await Message.find(keyword)
             .find({ isRead: false, isCustomerMessage: true })
             .populate("sender", "-password")
-            .populate("customer", "-password");
         res.json(messages);
     } catch (error) {
         console.error(error);

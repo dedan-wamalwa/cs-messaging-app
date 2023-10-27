@@ -50,7 +50,7 @@ const ChatBox = () => {
     };
 
     useEffect(() => {
-        const checkIfMessageIsRead = async (): Promise<void> => {
+        const markAsRead = async (): Promise<void> => {
             if (!location) {
                 navigate("/");
             }
@@ -60,14 +60,6 @@ const ChatBox = () => {
                 const response = await fetch(`${api}/api/messages/check-status/${messageId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const { wasRead } = await response.json();
-                console.log(`was read:${wasRead}`);
-
-                if (wasRead) {
-                    props.setOpenModal("pop-up");
-                } else {
-                    return;
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -89,8 +81,8 @@ const ChatBox = () => {
                 throw error;
             }
         };
-        checkIfMessageIsRead();
         getCustomerMessages();
+        markAsRead();
     }, []);
 
     useEffect(() => {
@@ -154,6 +146,8 @@ const ChatBox = () => {
     useEffect(() => {
         socket.on("messageReceived", (newMessageRecieved: message) => {
             if (newMessageRecieved.customer == id) {
+                console.log("new chat message received: >");
+                console.log(newMessageRecieved);
                 setMessages([...messages, newMessageRecieved]);
             }
         });
