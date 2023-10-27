@@ -57,7 +57,6 @@ const SignUp = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            const data = await response.json();
             setLoading(false);
 
             navigate("/sign_in", { state: email });

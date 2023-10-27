@@ -44,21 +44,33 @@ const io = require("socket.io")(server, {
 io.on("connection", (socket) => {
     console.log("Conneceted to socketio");
     socket.on("setup", (userData) => {
+        if (!userData) {
+            return console.log("Error: userData is null!");
+        }
         socket.join(userData._id);
         console.log("set up user: " + userData._id);
         socket.emit(`${userData.name} connected`);
     });
     socket.on("agentLogIn", (agentId) => {
+        if (!agentId) {
+            return console.log("Error: agent id null!");
+        }
         socket.join(DEFAULT_COMPANY_ID);
         console.log(agentId + " joined agent room : {" + DEFAULT_COMPANY_ID + "}");
         socket.emit(`${agentId} connected`);
     });
     socket.on("joinChat", (customerId) => {
+        if (!customerId) {
+            return console.log("Error: customer id null!");
+        }
         socket.join(customerId);
         console.log("User joined chat: " + customerId);
     });
 
     socket.on("newMessage", (newMessageReceived) => {
+        if (!newMessageReceived) {
+            return console.log("message null!");
+        }
         const customer = newMessageReceived.customer;
         console.log(`new message received:${newMessageReceived}`);
         if (!customer) return console.log("message not tied to customer");

@@ -16,7 +16,6 @@ const Home = () => {
     const storedData = localStorage.getItem("userInfo");
     const userDetails = JSON.parse(storedData as string);
     const [messages, setMessages] = useState<message[]>(_messages);
-    const [socketConnected, setSocketConnected] = useState<boolean>(false);
     const [search, setSearch] = useState<string>("");
 
     useEffect(() => {
@@ -28,9 +27,6 @@ const Home = () => {
     useEffect(() => {
         socket = io(ENDPOINT);
         socket.emit("setup", userDetails);
-        socket.on("connection", () => {
-            setSocketConnected(true);
-        });
         socket.emit("agentLogIn", userDetails._id);
     }, []);
 
