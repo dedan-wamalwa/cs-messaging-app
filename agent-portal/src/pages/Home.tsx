@@ -41,12 +41,11 @@ const Home = () => {
     const getProfilePath = (sender: user) => {
         return sender.profilePhotoPath;
     };
-    const getCustomerId = (customer: user) => {
-        return customer._id;
-    };
     useEffect(() => {
         socket.on("customerMessageReceived", (newMessageRecieved: message) => {
             if (newMessageRecieved.isCustomerMessage) {
+                console.log("message received")
+                console.log(newMessageRecieved)
                 setMessages([...messages, newMessageRecieved]);
             }
         });
@@ -77,7 +76,7 @@ const Home = () => {
                         .map((message) => (
                             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={message._id}>
                                 <Table.Cell className="whitespace-nowrap text-gray-900 dark:text-white">
-                                    <Link to={`chats/${getCustomerId(message.customer as user)}`} state={{ messageId: message._id }}>
+                                    <Link to={`chats/${message.customer}`} state={{ messageId: message._id }}>
                                         <Message
                                             profilePhotoPath={getProfilePath(message.sender as user)}
                                             senderName={getSenderName(message.sender as user)}
