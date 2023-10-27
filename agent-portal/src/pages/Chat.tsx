@@ -83,7 +83,8 @@ const ChatBox = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setMessages(data);
+                setMessages([...data]);
+
             } catch (error) {
                 console.error("Error:", error);
                 throw error;
