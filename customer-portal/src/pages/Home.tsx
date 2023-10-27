@@ -13,7 +13,7 @@ const Home = () => {
     const storedData: string | null = localStorage.getItem("userInfo");
     const userDetails: user = storedData ? JSON.parse(storedData) : navigate("/sign_in");
     const [messages, setMessages] = useState<message[]>(_messages);
-    const [socketConnected, setSocketConnected] = useState<boolean>(false);
+    // const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
     const [description, setDescription] = useState<string>();
 
@@ -33,9 +33,6 @@ const Home = () => {
     useEffect(() => {
         socket = io(ENDPOINT);
         socket.emit("setup", userDetails);
-        socket.on("connection", () => {
-            setSocketConnected(true);
-        });
         socket.emit("joinChat", userDetails._id as string);
     }, []);
     const sendMessage = async (): Promise<void> => {

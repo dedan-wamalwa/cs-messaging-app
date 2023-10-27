@@ -1,8 +1,8 @@
 import { Card, Textarea, Modal, Dropdown, Button } from "flowbite-react";
 import ScrollableFeed from "react-scrollable-feed";
 import ChatMessage from "../components/messages/ChatMessage";
-import { useLoaderData, useParams, useLocation, useNavigate, Link } from "react-router-dom";
-import { message, user, Params, ServerToClientEvents, ClientToServerEvents } from "../types";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
+import { message, user, ServerToClientEvents, ClientToServerEvents } from "../types";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import "../App.css";
@@ -19,18 +19,17 @@ const ChatBox = () => {
 
     const storedData = localStorage.getItem("userInfo");
     const userDetails = JSON.parse(storedData as string);
-    const [messages, setMessages] = useState<message[]>(useLoaderData() as message[]);
+    const [messages, setMessages] = useState<message[]>([]);
     const [description, setDescription] = useState<string>();
-    const [socketConnected, setSocketConnected] = useState<boolean>(false);
     const [customerData, setCustomerData] = useState<user | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    // const [loading, setLoading] = useState<boolean>(false);
 
     const [openModal, setOpenModal] = useState<string | undefined>();
     const props = { openModal, setOpenModal };
     const chatRef = useRef<null | HTMLFormElement>(null);
 
     const getCustomerDetails = async (): Promise<void> => {
-        setLoading(true);
+        // setLoading(true);
         props.setOpenModal("default");
         try {
             const url = import.meta.env.VITE_PUBLIC_API_HOST;
@@ -38,14 +37,14 @@ const ChatBox = () => {
             if (response.ok) {
                 const data = await response.json();
                 setCustomerData(data);
-                setLoading(false);
+                // setLoading(false);
             }
             if (response.status === 401) {
                 throw new Error("user does not exist");
             }
         } catch (error) {
             console.error("Error:", error);
-            setLoading(false);
+            // setLoading(false);
             throw error;
         }
     };
@@ -75,15 +74,28 @@ const ChatBox = () => {
                 throw error;
             }
         };
+
+        const getCustomerMessages = async () => {
+            const api = import.meta.env.VITE_PUBLIC_API_HOST;
+            try {
+                const response = await fetch(`${api}/api/messages/customer/${id}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setMessages(data);
+            } catch (error) {
+                console.error("Error:", error);
+                throw error;
+            }
+        };
         checkIfMessageIsRead();
+        getCustomerMessages();
     }, []);
 
     useEffect(() => {
         socket = io(ENDPOINT);
         socket.emit("setup", userDetails);
-        socket.on("connection", () => {
-            setSocketConnected(true);
-        });
         socket.emit("joinChat", id as string);
     }, []);
     const sendMessage = async (): Promise<void> => {
@@ -300,18 +312,4 @@ const ChatBox = () => {
     );
 };
 
-export const customerMessagesLoader = async ({ params }: { params: Params }) => {
-    const api = import.meta.env.VITE_PUBLIC_API_HOST;
-    const { id } = params;
-    try {
-        const response = await fetch(`${api}/api/messages/customer/${id}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
-};
 export default ChatBox;
