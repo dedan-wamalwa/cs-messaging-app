@@ -84,6 +84,7 @@ const ChatBox = () => {
                 }
                 const data = await response.json();
                 setMessages([...data]);
+
             } catch (error) {
                 console.error("Error:", error);
                 throw error;
