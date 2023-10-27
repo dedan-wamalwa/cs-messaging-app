@@ -29,7 +29,7 @@ export default function DefaultSidebar() {
                         <p>Profile</p>
                     </Sidebar.Item>
 
-                    <Sidebar.Item href="" icon={HiArrowSmRight} onClick={handleClick}>
+                    <Sidebar.Item icon={HiArrowSmRight} onClick={handleClick}>
                         <p>Sign Out</p>
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
