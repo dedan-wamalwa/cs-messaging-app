@@ -85,8 +85,6 @@ const Home = () => {
     useEffect(() => {
         socket.on("messageReceived", (newMessageRecieved: message) => {
             if (newMessageRecieved.customer == userDetails._id) {
-                console.log("message received")
-                console.log(newMessageRecieved);
                 setMessages([...messages, newMessageRecieved]);
             }
         });

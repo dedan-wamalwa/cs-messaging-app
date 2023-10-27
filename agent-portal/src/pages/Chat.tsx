@@ -75,7 +75,6 @@ const ChatBox = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(data);
                 setMessages([...data]);
             } catch (error) {
                 console.error("Error:", error);
@@ -125,8 +124,6 @@ const ChatBox = () => {
             const data = await response.json();
             setDescription("");
             socket.emit("newMessage", data);
-            console.log("sent customer message:>");
-            console.log(data);
         } catch (error: any | unknown) {
             console.error("Error:", error.message);
             throw error;
