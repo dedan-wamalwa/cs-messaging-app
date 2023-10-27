@@ -44,7 +44,7 @@ export type Params = {
 // socket.io types
 export type ServerToClientEvents = {
     connection: () => void;
-    basicEmit: (a: number, b: string, c: Buffer) => void;
+    basicEmit: (a: number, b: string) => void;
     withAck: (d: string, callback: (e: number) => void) => void;
     messageReceived: (messageReceived: message) => void;
     customerMessageReceived: (customerMessage: message) => void;
