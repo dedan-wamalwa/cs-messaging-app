@@ -72,11 +72,13 @@ io.on("connection", (socket) => {
             return console.log("message null!");
         }
         const customer = newMessageReceived.customer;
-        console.log(`new message received:${newMessageReceived}`);
+        console.log(`Customer:${customer}`)
         if (!customer) return console.log("message not tied to customer");
         socket.in(customer).emit("messageReceived", newMessageReceived);
+        console.log(newMessageReceived)
         if (newMessageReceived.isCustomerMessage && !newMessageReceived.isRead) {
             socket.in(DEFAULT_COMPANY_ID).emit("customerMessageReceived", newMessageReceived);
+            console.log("msg sent to admin")
         }
     });
     socket.off("setup", () => {
