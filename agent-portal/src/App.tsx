@@ -2,7 +2,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import SignUp from "./pages/Signup";
 import SignIn from "./pages/Signin";
 import Home, { messagesLoader } from "./pages/Home";
-import Chat, { customerMessagesLoader } from "./pages/Chat";
+import Chat from "./pages/Chat";
 import RootLayout from "./layouts/RootLayout";
 import NotFound from "./pages/NotFound";
 import ErrorHandler from "./pages/ErrorHandler";
@@ -11,7 +11,7 @@ const router = createBrowserRouter(
         <>
             <Route path="/" element={<RootLayout />} errorElement={<ErrorHandler />}>
                 <Route index element={<Home />} loader={messagesLoader} />
-                <Route path="/chats/:id" element={<Chat />} loader={customerMessagesLoader} />
+                <Route path="/chats/:id" element={<Chat />} />
             </Route>
             <Route path="/sign_up" element={<SignUp />} />
             <Route path="/sign_in" element={<SignIn />} />
