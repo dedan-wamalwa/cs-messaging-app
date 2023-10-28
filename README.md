@@ -1,6 +1,6 @@
 # <h1>CS Messaging App</h1>
 
-This is a simple web application that allows customers send support messages to the company (Branch Int'l) and agents respond to the questions in real time.
+This is a simple web application that allows customers send support messages to the company and agents respond to the questions in real time.
 
 ## <h2>Table of Contents</h2>
 
@@ -88,7 +88,8 @@ For the project to work correctly, you need to set up some environment variables
 ```cmd
 cd /agent-portal
 ```
-
+The following variables are required:
+   
 -   **_VITE_PUBLIC_API_HOST_** # the backend api's host
 -   **_VITE_FILE_UPLOAD_URL_** # link to upload files in cloudinary
 -   **_VITE_DEFAULT_PROFILE_URL_** # default profile pic url if user didn't provide one
@@ -98,6 +99,7 @@ cd /agent-portal
 ```cmd
 cd ../customer-portal
 ```
+The following variables are required:
 
 -   **_VITE_PUBLIC_API_HOST_** # the backend api's host
 -   **_VITE_FILE_UPLOAD_URL_** # link to upload files in cloudinary
